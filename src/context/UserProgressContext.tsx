@@ -1,0 +1,139 @@
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { UserProgress, Bookmark, BookmarkedCategory } from '../types'
+
+interface UserProgressContextType {
+  progress: UserProgress
+  bookmarks: Bookmark[]
+  bookmarkedCategories: BookmarkedCategory[]
+  recentDuas: string[]
+  addBookmark: (duaId: string) => void
+  removeBookmark: (duaId: string) => void
+  isBookmarked: (duaId: string) => boolean
+  addBookmarkedCategory: (categoryId: string) => void
+  removeBookmarkedCategory: (categoryId: string) => void
+  isCategoryBookmarked: (categoryId: string) => boolean
+  incrementRead: () => void
+  addRecentDua: (duaId: string) => void
+}
+
+const UserProgressContext = createContext<UserProgressContextType | undefined>(undefined)
+
+const defaultProgress: UserProgress = {
+  totalRead: 0,
+  lastReadDate: '',
+  streak: 0,
+  readToday: false
+}
+
+export function UserProgressProvider({ children }: { children: ReactNode }) {
+  const [progress, setProgress] = useState<UserProgress>(() => {
+    const saved = localStorage.getItem('userProgress')
+    return saved ? JSON.parse(saved) : defaultProgress
+  })
+
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>(() => {
+    const saved = localStorage.getItem('bookmarks')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  const [bookmarkedCategories, setBookmarkedCategories] = useState<BookmarkedCategory[]>(() => {
+    const saved = localStorage.getItem('bookmarkedCategories')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  const [recentDuas, setRecentDuas] = useState<string[]>(() => {
+    const saved = localStorage.getItem('recentDuas')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem('userProgress', JSON.stringify(progress))
+  }, [progress])
+
+  useEffect(() => {
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks))
+  }, [bookmarks])
+
+  useEffect(() => {
+    localStorage.setItem('bookmarkedCategories', JSON.stringify(bookmarkedCategories))
+  }, [bookmarkedCategories])
+
+  useEffect(() => {
+    localStorage.setItem('recentDuas', JSON.stringify(recentDuas))
+  }, [recentDuas])
+
+  const addRecentDua = (duaId: string) => {
+    setRecentDuas(prev => {
+      const filtered = prev.filter(id => id !== duaId)
+      return [duaId, ...filtered].slice(0, 5)
+    })
+  }
+
+  const addBookmark = (duaId: string) => {
+    if (!isBookmarked(duaId)) {
+      setBookmarks([...bookmarks, { duaId, addedAt: new Date().toISOString() }])
+    }
+  }
+
+  const removeBookmark = (duaId: string) => {
+    setBookmarks(bookmarks.filter(b => b.duaId !== duaId))
+  }
+
+  const isBookmarked = (duaId: string) => {
+    return bookmarks.some(b => b.duaId === duaId)
+  }
+
+  const addBookmarkedCategory = (categoryId: string) => {
+    if (!isCategoryBookmarked(categoryId)) {
+      setBookmarkedCategories([...bookmarkedCategories, { categoryId, addedAt: new Date().toISOString() }])
+    }
+  }
+
+  const removeBookmarkedCategory = (categoryId: string) => {
+    setBookmarkedCategories(bookmarkedCategories.filter(c => c.categoryId !== categoryId))
+  }
+
+  const isCategoryBookmarked = (categoryId: string) => {
+    return bookmarkedCategories.some(c => c.categoryId === categoryId)
+  }
+
+  const incrementRead = () => {
+    const today = new Date().toDateString()
+    const lastRead = progress.lastReadDate ? new Date(progress.lastReadDate).toDateString() : ''
+    
+    setProgress(prev => ({
+      ...prev,
+      totalRead: prev.totalRead + 1,
+      lastReadDate: new Date().toISOString(),
+      readToday: today === lastRead ? prev.readToday : true,
+      streak: today === lastRead ? prev.streak : prev.streak + 1
+    }))
+  }
+
+  return (
+    <UserProgressContext.Provider value={{
+      progress,
+      bookmarks,
+      bookmarkedCategories,
+      recentDuas,
+      addBookmark,
+      removeBookmark,
+      isBookmarked,
+      addBookmarkedCategory,
+      removeBookmarkedCategory,
+      isCategoryBookmarked,
+      incrementRead,
+      addRecentDua
+    }}>
+      {children}
+    </UserProgressContext.Provider>
+  )
+}
+
+export function useUserProgress() {
+  const context = useContext(UserProgressContext)
+  if (!context) {
+    throw new Error('useUserProgress must be used within a UserProgressProvider')
+  }
+  return context
+}
