@@ -77,9 +77,9 @@ export default function Dua() {
   return (
     <div className="space-y-6 overflow-hidden relative min-h-[80vh] flex flex-col">
       <div className="flex items-center justify-between mb-2 gap-2">
-        <button onClick={() => navigate('/')} className="text-slate-500 hover:text-primary-600 flex items-center gap-2 font-semibold transition-colors bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700/50 max-w-[50%]">
-          <Home size={16} className="shrink-0" /> 
-          <span className="truncate">{category?.name || 'Home'}</span>
+        <button className="text-slate-500 hover:text-primary-600 flex items-center gap-2 font-semibold transition-colors bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700/50 max-w-[50%]">
+          {/*<Home size={16} className="shrink-0" /> 
+          <span className="truncate">{category?.name || 'Home'}</span>*/}
         </button>
         {category && (
           <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-4 py-2 rounded-full border border-primary-100 dark:border-primary-800/30 truncate max-w-[50%] drop-shadow-sm" dir="rtl">
