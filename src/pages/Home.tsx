@@ -40,7 +40,12 @@ export default function Home() {
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      {category && (
+                        <span className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wider px-2 py-1 rounded-full">
+                          Ch. {category.chapterId}
+                        </span>
+                      )}
                       <span className="flex items-center justify-center bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold text-[10px] uppercase tracking-wider px-2 py-1 rounded-full">
                         Dua #{item.dua.number}
                       </span>
