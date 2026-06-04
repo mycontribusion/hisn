@@ -5,7 +5,7 @@ import DuaCard from '../components/DuaCard'
 import { useUserProgress } from '../context/UserProgressContext'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Home } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function Dua() {
   const { duaIndex } = useParams<{ duaIndex: string }>()
