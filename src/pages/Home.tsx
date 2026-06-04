@@ -5,7 +5,7 @@ import DuaCard from '../components/DuaCard'
 import { useUserProgress } from '../context/UserProgressContext'
 
 export default function Home() {
-  const { progress, recentDuas } = useUserProgress()
+  const { recentDuas } = useUserProgress()
   
   const recentDuaObjects = recentDuas
     .map(id => duas.find(d => d.id === id))

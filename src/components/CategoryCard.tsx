@@ -22,11 +22,6 @@ export default function CategoryCard({ category }: CategoryCardProps) {
     }
   }
 
-  const colorClasses = {
-    primary: 'border-primary-500 bg-primary-50 dark:bg-primary-900/20',
-    gold: 'border-gold-500 bg-gold-50 dark:bg-gold-900/20'
-  }
-
   const firstDua = duas.find(d => d.categoryId === category.id)
   const targetPath = firstDua ? `/dua/${firstDua.id}` : '/'
 
