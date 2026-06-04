@@ -14,7 +14,7 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/dua/:duaId" element={<Dua />} />
+            <Route path="/dua/:duaIndex" element={<Dua />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

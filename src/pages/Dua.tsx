@@ -8,11 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Home } from 'lucide-react'
 
 export default function Dua() {
-  const { duaId } = useParams<{ duaId: string }>()
+  const { duaIndex } = useParams<{ duaIndex: string }>()
   const navigate = useNavigate()
   
-  const currentIndex = duas.findIndex(d => d.id === duaId)
-  const dua = currentIndex !== -1 ? duas[currentIndex] : null
+  const currentIndex = parseInt(duaIndex ?? '0', 10)
+  const dua = duas[currentIndex] ?? null
   const category = dua ? categories.find(c => c.id === dua.categoryId) : null
   
   const { incrementRead, addRecentDua } = useUserProgress()
@@ -21,9 +21,9 @@ export default function Dua() {
   useEffect(() => {
     if (dua) {
       incrementRead()
-      addRecentDua(dua.id)
+      addRecentDua(String(currentIndex))
     }
-  }, [dua, incrementRead, addRecentDua])
+  }, [currentIndex])
 
   if (!dua) {
     return (
@@ -37,17 +37,15 @@ export default function Dua() {
   }
 
   const handleNext = () => {
-    if (currentIndex < duas.length - 1) {
-      setDirection(1)
-      navigate(`/dua/${duas[currentIndex + 1].id}`)
-    }
+    setDirection(1)
+    const nextIndex = (currentIndex + 1) % duas.length
+    navigate(`/dua/${nextIndex}`)
   }
 
   const handlePrev = () => {
-    if (currentIndex > 0) {
-      setDirection(-1)
-      navigate(`/dua/${duas[currentIndex - 1].id}`)
-    }
+    setDirection(-1)
+    const prevIndex = (currentIndex - 1 + duas.length) % duas.length
+    navigate(`/dua/${prevIndex}`)
   }
 
   const variants = {
@@ -93,8 +91,7 @@ export default function Dua() {
       <div className="flex justify-between items-center mb-6 glass-card rounded-full px-2 py-2 w-max mx-auto gap-4">
         <button 
           onClick={handleNext} 
-          disabled={currentIndex === duas.length - 1}
-          className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full disabled:opacity-30 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
+          className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
         >
           <ChevronLeft size={20} className="text-slate-700 dark:text-slate-300" />
         </button>
@@ -103,8 +100,7 @@ export default function Dua() {
         </span>
         <button 
           onClick={handlePrev} 
-          disabled={currentIndex === 0}
-          className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full disabled:opacity-30 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
+          className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
         >
           <ChevronRight size={20} className="text-slate-700 dark:text-slate-300" />
         </button>

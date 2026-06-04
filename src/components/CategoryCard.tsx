@@ -22,8 +22,8 @@ export default function CategoryCard({ category }: CategoryCardProps) {
     }
   }
 
-  const firstDua = duas.find(d => d.categoryId === category.id)
-  const targetPath = firstDua ? `/dua/${firstDua.id}` : '/'
+  const firstDuaIndex = duas.findIndex(d => d.categoryId === category.id)
+  const targetPath = firstDuaIndex !== -1 ? `/dua/${firstDuaIndex}` : '/'
 
   return (
     <Link

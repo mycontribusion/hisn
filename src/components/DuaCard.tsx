@@ -3,6 +3,7 @@ import { Dua } from '../types'
 import { useUserProgress } from '../context/UserProgressContext'
 import { Bookmark, Play, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
+import { duas } from '../data/duas'
 
 interface DuaCardProps {
   dua: Dua
@@ -95,7 +96,7 @@ export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
 
         {!showFull && (
           <Link
-            to={`/dua/${dua.id}`}
+            to={`/dua/${duas.findIndex(d => d === dua)}`}
             className="inline-block text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
             Read more →
