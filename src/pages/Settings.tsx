@@ -47,8 +47,45 @@ export default function Settings() {
           regularly recite these important duas.
         </p>
         <p className="text-gray-500 dark:text-gray-500 text-xs mt-3">
-          All supplications are from the famous book "Hisnul Muslim" by Sheikh Nasiruddin Albani.
+          All supplications are from the famous book "Hisnul Muslim" by Shaykh Sa'id bin Ali bin Wahf Al-Qahtani (1952–2018).
         </p>
+        <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-gray-500 dark:text-gray-400 text-xs font-medium mb-2">
+            Data Sources:
+          </p>
+          <ul className="text-gray-500 dark:text-gray-400 text-xs space-y-1">
+            <li>
+              <a
+                href="https://github.com/wafaaelmaandy/Hisn-Muslim-Json"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                wafaaelmaandy/Hisn-Muslim-Json
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/rn0x/hisn_almuslim_json"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                rn0x/hisn_almuslim_json
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://sunnah.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                sunnah.com
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   )

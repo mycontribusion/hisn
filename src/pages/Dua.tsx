@@ -69,7 +69,7 @@ export default function Dua() {
     }
   };
 
-  const swipeConfidenceThreshold = 10000;
+  const swipeConfidenceThreshold = 300;
   const swipePower = (offset: number, velocity: number) => {
     return Math.abs(offset) * velocity;
   };
@@ -86,24 +86,6 @@ export default function Dua() {
             {category.nameArabic}
           </span>
         )}
-      </div>
-
-      <div className="flex justify-between items-center mb-6 glass-card rounded-full px-2 py-2 w-max mx-auto gap-4">
-        <button 
-          onClick={handleNext} 
-          className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
-        >
-          <ChevronLeft size={20} className="text-slate-700 dark:text-slate-300" />
-        </button>
-        <span className="text-sm text-slate-500 font-bold tracking-wider px-2">
-          {currentIndex + 1} <span className="opacity-50 text-xs mx-1">/</span> {duas.length}
-        </span>
-        <button 
-          onClick={handlePrev} 
-          className="p-3 bg-slate-100 dark:bg-slate-800 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
-        >
-          <ChevronRight size={20} className="text-slate-700 dark:text-slate-300" />
-        </button>
       </div>
 
       <div className="w-full flex-1">
@@ -143,6 +125,27 @@ export default function Dua() {
             <DuaCard dua={dua} showFull={true} />
           </motion.div>
         </AnimatePresence>
+      </div>
+
+      {/* Bottom navigation bar - fixed above footer */}
+      <div className="fixed bottom-14 left-0 right-0 flex justify-center items-center gap-4 mb-2 z-[60]">
+        <button 
+          onClick={handleNext} 
+          className="p-2 bg-slate-100/80 dark:bg-slate-800/80 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
+          aria-label="Next dua"
+        >
+          <ChevronLeft size={16} className="text-slate-700 dark:text-slate-300" />
+        </button>
+        <span className="text-xs text-slate-500 font-bold tracking-wider glass-card rounded-full px-3 py-1">
+          {currentIndex + 1} <span className="opacity-50 mx-1">/</span> {duas.length}
+        </span>
+        <button 
+          onClick={handlePrev} 
+          className="p-2 bg-slate-100/80 dark:bg-slate-800/80 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
+          aria-label="Previous dua"
+        >
+          <ChevronRight size={16} className="text-slate-700 dark:text-slate-300" />
+        </button>
       </div>
     </div>
   )
