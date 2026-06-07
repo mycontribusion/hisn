@@ -39,6 +39,7 @@ export interface UserProgress {
   streak: number;
   readToday: boolean;
   lastReadDuaId?: string;
+  lastReadCategoryId?: string;
 }
 
 export type Theme = 'light' | 'dark' | 'system';

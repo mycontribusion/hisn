@@ -11,49 +11,54 @@ export default function Dua() {
   const { duaIndex } = useParams<{ duaIndex: string }>()
   const navigate = useNavigate()
   
-  const currentIndex = parseInt(duaIndex ?? '0', 10)
+  const currentIndex = parseInt(duaIndex ?? '1', 10) - 1
   const dua = duas[currentIndex] ?? null
   const category = dua ? categories.find(c => c.id === dua.categoryId) : null
   
-  const { incrementRead, addRecentDua, setLastReadDuaId } = useUserProgress()
+  const { incrementRead, addRecentDua, setLastReadDuaId, setLastReadCategoryId, addRecentCategory } = useUserProgress()
   const [direction, setDirection] = useState(0)
   const currentDuaIdRef = useRef<string | null>(null)
+  const currentCategoryIdRef = useRef<string | null>(null)
 
+  // Keep tracking the current active dua/category index/id
   useEffect(() => {
     if (dua) {
       currentDuaIdRef.current = String(currentIndex)
+      currentCategoryIdRef.current = dua.categoryId
       incrementRead()
-    }
-  }, [currentIndex])
-
-  useEffect(() => {
-    if (dua) {
+      setLastReadCategoryId(dua.categoryId)
       setLastReadDuaId(String(currentIndex))
     }
-  }, [currentIndex])
+  }, [currentIndex, dua, incrementRead, setLastReadCategoryId, setLastReadDuaId])
 
-  // Add current dua to recent when leaving the dua page (navigating away or closing app)
+  // Save to recent list on component unmount (returning home) or when exiting/backgrounding the app
   useEffect(() => {
-    return () => {
-      if (currentDuaIdRef.current) {
+    const saveToRecent = () => {
+      if (currentDuaIdRef.current && currentCategoryIdRef.current) {
         addRecentDua(currentDuaIdRef.current)
+        addRecentCategory(currentCategoryIdRef.current)
       }
     }
-  }, [addRecentDua])
 
-  // Add to recent when app is closed/exited (beforeunload)
-  useEffect(() => {
     const handleBeforeUnload = () => {
-      if (currentDuaIdRef.current) {
-        addRecentDua(currentDuaIdRef.current)
-        currentDuaIdRef.current = null
+      saveToRecent()
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        saveToRecent()
       }
     }
+
     window.addEventListener('beforeunload', handleBeforeUnload)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     return () => {
+      saveToRecent()
       window.removeEventListener('beforeunload', handleBeforeUnload)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [addRecentDua])
+  }, [addRecentDua, addRecentCategory])
 
   if (!dua) {
     return (
@@ -69,13 +74,13 @@ export default function Dua() {
   const handleNext = () => {
     setDirection(1)
     const nextIndex = (currentIndex + 1) % duas.length
-    navigate(`/dua/${nextIndex}`)
+    navigate(`/dua/${nextIndex + 1}`)
   }
 
   const handlePrev = () => {
     setDirection(-1)
     const prevIndex = (currentIndex - 1 + duas.length) % duas.length
-    navigate(`/dua/${prevIndex}`)
+    navigate(`/dua/${prevIndex + 1}`)
   }
 
   const variants = {

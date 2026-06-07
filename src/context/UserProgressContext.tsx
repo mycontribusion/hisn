@@ -6,7 +6,9 @@ interface UserProgressContextType {
   bookmarks: Bookmark[]
   bookmarkedCategories: BookmarkedCategory[]
   recentDuas: string[]
+  recentCategories: string[]
   setLastReadDuaId: (duaId: string) => void
+  setLastReadCategoryId: (categoryId: string) => void
   addBookmark: (duaId: string) => void
   removeBookmark: (duaId: string) => void
   isBookmarked: (duaId: string) => boolean
@@ -15,6 +17,7 @@ interface UserProgressContextType {
   isCategoryBookmarked: (categoryId: string) => boolean
   incrementRead: () => void
   addRecentDua: (duaId: string) => void
+  addRecentCategory: (categoryId: string) => void
 }
 
 const UserProgressContext = createContext<UserProgressContextType | undefined>(undefined)
@@ -47,6 +50,11 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : []
   })
 
+  const [recentCategories, setRecentCategories] = useState<string[]>(() => {
+    const saved = localStorage.getItem('recentCategories')
+    return saved ? JSON.parse(saved) : []
+  })
+
   useEffect(() => {
     localStorage.setItem('userProgress', JSON.stringify(progress))
   }, [progress])
@@ -63,17 +71,35 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('recentDuas', JSON.stringify(recentDuas))
   }, [recentDuas])
 
-  const setLastReadDuaId = (duaId: string) => {
+  useEffect(() => {
+    localStorage.setItem('recentCategories', JSON.stringify(recentCategories))
+  }, [recentCategories])
+
+  const setLastReadDuaId = useCallback((duaId: string) => {
     setProgress(prev => ({
       ...prev,
       lastReadDuaId: duaId
     }))
-  }
+  }, [])
+
+  const setLastReadCategoryId = useCallback((categoryId: string) => {
+    setProgress(prev => ({
+      ...prev,
+      lastReadCategoryId: categoryId
+    }))
+  }, [])
 
   const addRecentDua = useCallback((duaId: string) => {
     setRecentDuas(prev => {
       const filtered = prev.filter(id => id !== duaId)
       return [duaId, ...filtered].slice(0, 5)
+    })
+  }, [])
+
+  const addRecentCategory = useCallback((categoryId: string) => {
+    setRecentCategories(prev => {
+      const filtered = prev.filter(id => id !== categoryId)
+      return [categoryId, ...filtered].slice(0, 5)
     })
   }, [])
 
@@ -105,18 +131,19 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     return bookmarkedCategories.some(c => c.categoryId === categoryId)
   }
 
-  const incrementRead = () => {
-    const today = new Date().toDateString()
-    const lastRead = progress.lastReadDate ? new Date(progress.lastReadDate).toDateString() : ''
-    
-    setProgress(prev => ({
-      ...prev,
-      totalRead: prev.totalRead + 1,
-      lastReadDate: new Date().toISOString(),
-      readToday: today === lastRead ? prev.readToday : true,
-      streak: today === lastRead ? prev.streak : prev.streak + 1
-    }))
-  }
+  const incrementRead = useCallback(() => {
+    setProgress(prev => {
+      const today = new Date().toDateString()
+      const lastRead = prev.lastReadDate ? new Date(prev.lastReadDate).toDateString() : ''
+      return {
+        ...prev,
+        totalRead: prev.totalRead + 1,
+        lastReadDate: new Date().toISOString(),
+        readToday: today === lastRead ? prev.readToday : true,
+        streak: today === lastRead ? prev.streak : prev.streak + 1
+      }
+    })
+  }, [])
 
   return (
     <UserProgressContext.Provider value={{
@@ -124,7 +151,9 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
       bookmarks,
       bookmarkedCategories,
       recentDuas,
+      recentCategories,
       setLastReadDuaId,
+      setLastReadCategoryId,
       addBookmark,
       removeBookmark,
       isBookmarked,
@@ -132,7 +161,8 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
       removeBookmarkedCategory,
       isCategoryBookmarked,
       incrementRead,
-      addRecentDua
+      addRecentDua,
+      addRecentCategory
     }}>
       {children}
     </UserProgressContext.Provider>

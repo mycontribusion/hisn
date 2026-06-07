@@ -86,7 +86,7 @@ export default function Search() {
               return (
                 <Link
                   key={category.id}
-                  to={`/dua/${firstDuaIndex}`}
+                  to={`/dua/${firstDuaIndex + 1}`}
                   className="glass-card block p-4 rounded-2xl border hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -122,7 +122,7 @@ export default function Search() {
               return (
                 <Link
                   key={index}
-                  to={`/dua/${index}`}
+                  to={`/dua/${index + 1}`}
                   className="glass-card block p-5 rounded-2xl border hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

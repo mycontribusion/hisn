@@ -32,29 +32,42 @@ export default function Home() {
             `}</style>
             {recentDuaObjects.map(item => {
               const category = categories.find(c => c.id === item.dua.categoryId)
+              const firstDuaIndex = category
+                ? duas.findIndex(d => d.categoryId === category.id)
+                : -1
+              const chapterPath = firstDuaIndex !== -1 ? `/dua/${firstDuaIndex + 1}` : '/'
+
               return (
-                <Link
+                <div
                   key={item.index}
-                  to={`/dua/${item.index}`}
                   className="glass-card min-w-[240px] flex-shrink-0 p-5 rounded-2xl snap-start hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden group border"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3 flex-wrap">
                       {category && (
-                        <span className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wider px-2 py-1 rounded-full">
+                        <Link
+                          to={chapterPath}
+                          className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wider px-2 py-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                        >
                           Ch. {category.chapterId}
-                        </span>
+                        </Link>
                       )}
-                      <span className="flex items-center justify-center bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold text-[10px] uppercase tracking-wider px-2 py-1 rounded-full">
+                      <Link
+                        to={`/dua/${item.index + 1}`}
+                        className="flex items-center justify-center bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold text-xs uppercase tracking-wider px-3 py-1 rounded-full hover:bg-primary-200 dark:hover:bg-primary-800/60 transition-colors"
+                      >
                         Dua #{item.dua.number}
-                      </span>
+                      </Link>
                     </div>
-                    <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    <Link
+                      to={chapterPath}
+                      className="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors block mt-2"
+                    >
                       {category?.name}
-                    </h3>
+                    </Link>
                   </div>
-                </Link>
+                </div>
               )
             })}
           </div>

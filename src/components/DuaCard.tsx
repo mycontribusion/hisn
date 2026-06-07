@@ -86,7 +86,7 @@ export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
 
         {!showFull && (
           <Link
-            to={`/dua/${duas.findIndex(d => d === dua)}`}
+            to={`/dua/${duas.findIndex(d => d === dua) + 1}`}
             className="inline-block text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
             Read more →
