@@ -15,12 +15,12 @@ export default function Home() {
     .filter((item): item is { dua: NonNullable<typeof duas[0]>, index: number } => item !== null && item.dua !== undefined)
 
   return (
-    <div className="space-y-6">
-      <div className="text-center py-4">
+    <div className="space-y-4">
+      <div className="text-center py-2">
       </div>
 
       {recentDuaObjects.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-4">
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 px-1">
             Recently Read
           </h2>

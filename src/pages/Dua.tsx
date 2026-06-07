@@ -3,7 +3,7 @@ import { duas } from '../data/duas'
 import { categories } from '../data/categories'
 import DuaCard from '../components/DuaCard'
 import { useUserProgress } from '../context/UserProgressContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -15,15 +15,45 @@ export default function Dua() {
   const dua = duas[currentIndex] ?? null
   const category = dua ? categories.find(c => c.id === dua.categoryId) : null
   
-  const { incrementRead, addRecentDua } = useUserProgress()
+  const { incrementRead, addRecentDua, setLastReadDuaId } = useUserProgress()
   const [direction, setDirection] = useState(0)
+  const currentDuaIdRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (dua) {
+      currentDuaIdRef.current = String(currentIndex)
       incrementRead()
-      addRecentDua(String(currentIndex))
     }
   }, [currentIndex])
+
+  useEffect(() => {
+    if (dua) {
+      setLastReadDuaId(String(currentIndex))
+    }
+  }, [currentIndex])
+
+  // Add current dua to recent when leaving the dua page (navigating away or closing app)
+  useEffect(() => {
+    return () => {
+      if (currentDuaIdRef.current) {
+        addRecentDua(currentDuaIdRef.current)
+      }
+    }
+  }, [addRecentDua])
+
+  // Add to recent when app is closed/exited (beforeunload)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (currentDuaIdRef.current) {
+        addRecentDua(currentDuaIdRef.current)
+        currentDuaIdRef.current = null
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [addRecentDua])
 
   if (!dua) {
     return (
@@ -128,7 +158,7 @@ export default function Dua() {
       </div>
 
       {/* Bottom navigation bar - fixed above footer */}
-      <div className="fixed bottom-14 left-0 right-0 flex justify-center items-center gap-4 mb-2 z-[60]">
+      <div className="fixed bottom-20 left-0 right-0 flex justify-center items-center gap-4 mb-2 z-[60]">
         <button 
           onClick={handleNext} 
           className="p-2 bg-slate-100/80 dark:bg-slate-800/80 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"

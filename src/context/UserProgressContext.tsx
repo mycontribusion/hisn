@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
 import { UserProgress, Bookmark, BookmarkedCategory } from '../types'
 
 interface UserProgressContextType {
@@ -6,6 +6,7 @@ interface UserProgressContextType {
   bookmarks: Bookmark[]
   bookmarkedCategories: BookmarkedCategory[]
   recentDuas: string[]
+  setLastReadDuaId: (duaId: string) => void
   addBookmark: (duaId: string) => void
   removeBookmark: (duaId: string) => void
   isBookmarked: (duaId: string) => boolean
@@ -62,12 +63,19 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('recentDuas', JSON.stringify(recentDuas))
   }, [recentDuas])
 
-  const addRecentDua = (duaId: string) => {
+  const setLastReadDuaId = (duaId: string) => {
+    setProgress(prev => ({
+      ...prev,
+      lastReadDuaId: duaId
+    }))
+  }
+
+  const addRecentDua = useCallback((duaId: string) => {
     setRecentDuas(prev => {
       const filtered = prev.filter(id => id !== duaId)
       return [duaId, ...filtered].slice(0, 5)
     })
-  }
+  }, [])
 
   const addBookmark = (duaId: string) => {
     if (!isBookmarked(duaId)) {
@@ -116,6 +124,7 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
       bookmarks,
       bookmarkedCategories,
       recentDuas,
+      setLastReadDuaId,
       addBookmark,
       removeBookmark,
       isBookmarked,

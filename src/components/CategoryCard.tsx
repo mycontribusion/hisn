@@ -38,12 +38,12 @@ export default function CategoryCard({ category }: CategoryCardProps) {
               {category.chapterId}
             </span>
           </div>
-          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            {category.name}
-          </h3>
           <p className="text-base font-arabic text-slate-500 dark:text-slate-400 mt-1" dir="rtl">
             {category.nameArabic}
           </p>
+          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            {category.name}
+          </h3>
         </div>
         <button
           onClick={handleBookmark}

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Dua } from '../types'
 import { useUserProgress } from '../context/UserProgressContext'
-import { Bookmark, Play, Eye, EyeOff } from 'lucide-react'
+import { Bookmark, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { duas } from '../data/duas'
 
@@ -81,16 +81,6 @@ export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
               </div>
             )}
 
-            <p className="text-xs text-slate-500 dark:text-slate-500 uppercase tracking-wider font-semibold">
-              Ref: {dua.reference}
-            </p>
-
-            {dua.audioUrl && (
-              <button className="flex items-center gap-2 text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 px-4 py-2 rounded-xl transition-colors font-medium">
-                <Play size={16} />
-                Listen to recitation
-              </button>
-            )}
           </div>
         )}
 

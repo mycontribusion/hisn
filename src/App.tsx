@@ -5,7 +5,6 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import Dua from './pages/Dua'
 import Bookmarks from './pages/Bookmarks'
-import Settings from './pages/Settings'
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/dua/:duaIndex" element={<Dua />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
-            <Route path="/settings" element={<Settings />} />
           </Routes>
         </Layout>
       </UserProgressProvider>
