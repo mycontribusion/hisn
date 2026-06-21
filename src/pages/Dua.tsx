@@ -60,6 +60,38 @@ export default function Dua() {
     }
   }, [addRecentDua, addRecentCategory])
 
+  // Keep screen on while viewing a dua
+  useEffect(() => {
+    let wakeLock: WakeLockSentinel | null = null
+
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen')
+        }
+      } catch (err) {
+        console.error('Failed to request wake lock:', err)
+      }
+    }
+
+    requestWakeLock()
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        requestWakeLock()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      if (wakeLock) {
+        wakeLock.release()
+      }
+    }
+  }, [])
+
   if (!dua) {
     return (
       <div className="text-center py-8">

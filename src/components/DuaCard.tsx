@@ -73,18 +73,26 @@ export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
             </p>
 
             {dua.virtue && (
-              <div className="bg-primary-50/50 dark:bg-primary-900/20 p-4 rounded-xl border border-primary-100 dark:border-primary-800/30">
-                <p className="text-sm text-primary-800 dark:text-primary-300">
-                  <strong className="font-semibold tracking-wide uppercase text-xs mr-2">Virtue:</strong> 
-                  {dua.virtue}
-                </p>
-              </div>
-            )}
+               <div className="bg-primary-50/50 dark:bg-primary-900/20 p-4 rounded-xl border border-primary-100 dark:border-primary-800/30">
+                 <p className="text-sm text-primary-800 dark:text-primary-300">
+                   <strong className="font-semibold tracking-wide uppercase text-xs mr-2">Virtue:</strong> 
+                   {dua.virtue}
+                 </p>
+               </div>
+             )}
 
-          </div>
-        )}
+             {dua.footnoteAr && (
+               <div className="pt-2 border-t border-slate-200 dark:border-slate-800/50">
+                 <p className="text-xs text-slate-500 dark:text-slate-400 italic" dir="rtl">
+                   {dua.footnoteAr}
+                 </p>
+               </div>
+             )}
 
-        {!showFull && (
+           </div>
+         )}
+
+         {!showFull && (
           <Link
             to={`/dua/${duas.findIndex(d => d === dua) + 1}`}
             className="inline-block text-sm text-primary-600 hover:text-primary-700 font-medium"
