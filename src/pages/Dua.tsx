@@ -185,7 +185,7 @@ export default function Dua() {
             {category && (
               <div className="text-center mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 px-4 drop-shadow-sm">
-                  {category.name}
+                  {category.chapterId ?? category.id}. {category.name}
                 </h2>
               </div>
             )}
