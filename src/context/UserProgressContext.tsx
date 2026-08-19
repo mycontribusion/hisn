@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
-import { UserProgress, Bookmark, BookmarkedCategory } from '../types'
+import { UserProgress, Bookmark, BookmarkedCategory, RecentDua } from '../types'
 
 interface UserProgressContextType {
   progress: UserProgress
   bookmarks: Bookmark[]
   bookmarkedCategories: BookmarkedCategory[]
-  recentDuas: string[]
+  recentDuas: RecentDua[]
   recentCategories: string[]
   setLastReadDuaId: (duaId: string) => void
   setLastReadCategoryId: (categoryId: string) => void
@@ -16,7 +16,7 @@ interface UserProgressContextType {
   removeBookmarkedCategory: (categoryId: string) => void
   isCategoryBookmarked: (categoryId: string) => boolean
   incrementRead: () => void
-  addRecentDua: (duaId: string) => void
+  addRecentDua: (duaId: string, chapterId: string) => void
   addRecentCategory: (categoryId: string) => void
 }
 
@@ -45,9 +45,20 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : []
   })
 
-  const [recentDuas, setRecentDuas] = useState<string[]>(() => {
+  const [recentDuas, setRecentDuas] = useState<RecentDua[]>(() => {
     const saved = localStorage.getItem('recentDuas')
-    return saved ? JSON.parse(saved) : []
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+          return parsed.map(id => ({ duaId: id, chapterId: '' }))
+        }
+        return parsed
+      } catch {
+        return []
+      }
+    }
+    return []
   })
 
   const [recentCategories, setRecentCategories] = useState<string[]>(() => {
@@ -89,10 +100,10 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     }))
   }, [])
 
-  const addRecentDua = useCallback((duaId: string) => {
+  const addRecentDua = useCallback((duaId: string, chapterId: string) => {
     setRecentDuas(prev => {
-      const filtered = prev.filter(id => id !== duaId)
-      return [duaId, ...filtered].slice(0, 5)
+      const filtered = prev.filter(item => item.chapterId !== chapterId)
+      return [{ duaId, chapterId }, ...filtered].slice(0, 5)
     })
   }, [])
 

@@ -42,5 +42,10 @@ export interface UserProgress {
   lastReadCategoryId?: string;
 }
 
+export interface RecentDua {
+  duaId: string;
+  chapterId: string;
+}
+
 export type Theme = 'light' | 'dark' | 'system';
 export type Language = 'en' | 'ar' | 'both';

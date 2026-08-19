@@ -35,7 +35,9 @@ export default function Dua() {
   useEffect(() => {
     const saveToRecent = () => {
       if (currentDuaIdRef.current && currentCategoryIdRef.current) {
-        addRecentDua(currentDuaIdRef.current)
+        const category = categories.find(c => c.id === currentCategoryIdRef.current)
+        const chapterId = category?.chapterId?.toString() || currentCategoryIdRef.current
+        addRecentDua(currentDuaIdRef.current, chapterId)
         addRecentCategory(currentCategoryIdRef.current)
       }
     }

@@ -8,11 +8,11 @@ export default function Home() {
   const { recentDuas } = useUserProgress()
   
   const recentDuaObjects = recentDuas
-    .map(indexStr => {
-      const idx = parseInt(indexStr, 10)
-      return isNaN(idx) ? null : { dua: duas[idx], index: idx }
+    .map(item => {
+      const idx = parseInt(item.duaId, 10)
+      return isNaN(idx) ? null : { dua: duas[idx], index: idx, duaId: item.duaId }
     })
-    .filter((item): item is { dua: NonNullable<typeof duas[0]>, index: number } => item !== null && item.dua !== undefined)
+    .filter((item): item is { dua: NonNullable<typeof duas[0]>, index: number, duaId: string } => item !== null && item.dua !== undefined)
 
   return (
     <div className="space-y-4">
@@ -39,7 +39,7 @@ export default function Home() {
 
               return (
                 <div
-                  key={item.index}
+                  key={item.duaId}
                   className="glass-card min-w-[240px] flex-shrink-0 p-5 rounded-2xl snap-start hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden group border"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
