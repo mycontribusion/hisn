@@ -20,13 +20,16 @@ export default function Dua() {
   const currentDuaIdRef = useRef<string | null>(null)
   const currentCategoryIdRef = useRef<string | null>(null)
 
-  // Keep tracking the current active dua/category index/id
+  // Keep tracking the current active dua/category index/id & scroll to top on change
   useEffect(() => {
     if (dua) {
       currentDuaIdRef.current = String(currentIndex)
       currentCategoryIdRef.current = dua.categoryId
       recordDuaRead(String(currentIndex), dua.categoryId)
     }
+    window.scrollTo(0, 0)
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
   }, [currentIndex, dua, recordDuaRead])
 
   // Save to recent list on component unmount (returning home) or when exiting/backgrounding the app
