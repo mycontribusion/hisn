@@ -137,58 +137,57 @@ export default function Dua() {
   };
 
   return (
-    <div className="space-y-6 overflow-hidden relative min-h-[80vh] flex flex-col">
-      <div className="flex items-center justify-between mb-2 gap-2">
-        <button className="text-slate-500 hover:text-primary-600 flex items-center gap-2 font-semibold transition-colors bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700/50 max-w-[50%]">
-          {/*<Home size={16} className="shrink-0" /> 
-          <span className="truncate">{category?.name || 'Home'}</span>*/}
-        </button>
-        {category && (
-          <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-4 py-2 rounded-full border border-primary-100 dark:border-primary-800/30 truncate max-w-[50%] drop-shadow-sm" dir="rtl">
-            {category.nameArabic}
-          </span>
-        )}
-      </div>
-
-      <div className="w-full flex-1">
-        <AnimatePresence initial={false} custom={direction} mode="popLayout">
-          <motion.div
-            key={dua.id}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: "tween", ease: "easeOut", duration: 0.18 },
-              opacity: { duration: 0.15 }
-            }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.15}
-            onDragEnd={(_, { offset, velocity }) => {
-              const swipe = offset.x * 0.6 + velocity.x * 0.2;
-              if (swipe > 40) {
-                // Swiping Right (pulling from left): Advance to Next Dua in RTL
-                handleNext();
-              } else if (swipe < -40) {
-                // Swiping Left (pulling from right): Return to Prev Dua in RTL
-                handlePrev();
-              }
-            }}
-            className="w-full touch-pan-y cursor-grab active:cursor-grabbing pb-8"
-          >
+    <div className="w-full min-h-[calc(100vh-160px)] flex flex-col relative select-none">
+      <AnimatePresence initial={false} custom={direction} mode="popLayout">
+        <motion.div
+          key={dua.id}
+          custom={direction}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{
+            x: { type: "tween", ease: "easeOut", duration: 0.18 },
+            opacity: { duration: 0.15 }
+          }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.15}
+          onDragEnd={(_, { offset, velocity }) => {
+            const swipe = offset.x * 0.6 + velocity.x * 0.2;
+            if (swipe > 40) {
+              // Swiping Right (pulling from left): Advance to Next Dua in RTL
+              handleNext();
+            } else if (swipe < -40) {
+              // Swiping Left (pulling from right): Return to Prev Dua in RTL
+              handlePrev();
+            }
+          }}
+          className="w-full flex-1 flex flex-col touch-pan-y cursor-grab active:cursor-grabbing pb-24"
+        >
+          {/* Top Category Badge */}
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="max-w-[50%]" />
             {category && (
-              <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 px-4 drop-shadow-sm">
-                  {category.chapterId ?? category.id}. {category.name}
-                </h2>
-              </div>
+              <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-4 py-2 rounded-full border border-primary-100 dark:border-primary-800/30 truncate max-w-[80%] drop-shadow-sm" dir="rtl">
+                {category.nameArabic}
+              </span>
             )}
-            <DuaCard dua={dua} showFull={true} duaIndex={currentIndex} />
-          </motion.div>
-        </AnimatePresence>
-      </div>
+          </div>
+
+          {/* Chapter Title */}
+          {category && (
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 px-4 drop-shadow-sm">
+                {category.chapterId ?? category.id}. {category.name}
+              </h2>
+            </div>
+          )}
+
+          {/* Dua Card */}
+          <DuaCard dua={dua} showFull={true} duaIndex={currentIndex} />
+        </motion.div>
+      </AnimatePresence>
 
       {/* Bottom navigation bar - fixed above footer */}
       <div className="fixed bottom-20 left-0 right-0 flex justify-center items-center gap-4 mb-2 z-[60]">
