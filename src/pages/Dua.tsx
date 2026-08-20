@@ -118,7 +118,7 @@ export default function Dua() {
   const variants = {
     enter: (direction: number) => {
       return {
-        x: direction > 0 ? 250 : -250,
+        x: direction > 0 ? -250 : 250,
         opacity: 0
       };
     },
@@ -130,7 +130,7 @@ export default function Dua() {
     exit: (direction: number) => {
       return {
         zIndex: 0,
-        x: direction > 0 ? -250 : 250,
+        x: direction > 0 ? 250 : -250,
         opacity: 0
       };
     }
@@ -168,9 +168,11 @@ export default function Dua() {
             dragElastic={0.15}
             onDragEnd={(_, { offset, velocity }) => {
               const swipe = offset.x * 0.6 + velocity.x * 0.2;
-              if (swipe < -40) {
+              if (swipe > 40) {
+                // Swiping Right (pulling from left): Advance to Next Dua in RTL
                 handleNext();
-              } else if (swipe > 40) {
+              } else if (swipe < -40) {
+                // Swiping Left (pulling from right): Return to Prev Dua in RTL
                 handlePrev();
               }
             }}
