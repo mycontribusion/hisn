@@ -1,10 +1,24 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Search as SearchIcon, X } from 'lucide-react'
 import { getFirstDuaIndex, getCategoryById, normalizedDuas, normalizedCategories, normalizeArabicText } from '../data/lookup'
 
 export default function Search() {
-  const [query, setQuery] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [query, setQueryState] = useState(() => {
+    return searchParams.get('q') || sessionStorage.getItem('lastSearchQuery') || ''
+  })
+
+  const handleQueryChange = (newQuery: string) => {
+    setQueryState(newQuery)
+    if (newQuery.trim()) {
+      sessionStorage.setItem('lastSearchQuery', newQuery)
+      setSearchParams({ q: newQuery }, { replace: true })
+    } else {
+      sessionStorage.removeItem('lastSearchQuery')
+      setSearchParams({}, { replace: true })
+    }
+  }
 
   const results = useMemo(() => {
     const rawQuery = query.trim()
@@ -41,27 +55,29 @@ export default function Search() {
 
   return (
     <div className="space-y-6">
-      {/* Search Input */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-          <SearchIcon size={18} className="text-slate-400" />
+      {/* Sticky Search Input */}
+      <div className="sticky top-[68px] z-30 pt-2 pb-4 -mx-4 px-4 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <SearchIcon size={18} className="text-slate-400" />
+          </div>
+          <input
+            type="text"
+            value={query}
+            onChange={e => handleQueryChange(e.target.value)}
+            placeholder="Search chapters or duas..."
+            autoFocus
+            className="w-full glass-card rounded-2xl py-4 pl-11 pr-12 text-slate-800 dark:text-slate-100 placeholder-slate-400 border outline-none focus:ring-2 focus:ring-primary-500/50 transition-all text-base shadow-sm"
+          />
+          {query && (
+            <button
+              onClick={() => handleQueryChange('')}
+              className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Search chapters or duas..."
-          autoFocus
-          className="w-full glass-card rounded-2xl py-4 pl-11 pr-12 text-slate-800 dark:text-slate-100 placeholder-slate-400 border outline-none focus:ring-2 focus:ring-primary-500/50 transition-all text-base"
-        />
-        {query && (
-          <button
-            onClick={() => setQuery('')}
-            className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-          >
-            <X size={18} />
-          </button>
-        )}
       </div>
 
       {/* Empty state */}
