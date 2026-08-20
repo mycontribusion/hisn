@@ -118,7 +118,7 @@ export default function Dua() {
   const variants = {
     enter: (direction: number) => {
       return {
-        x: direction > 0 ? -300 : 300,
+        x: direction > 0 ? 250 : -250,
         opacity: 0
       };
     },
@@ -130,7 +130,7 @@ export default function Dua() {
     exit: (direction: number) => {
       return {
         zIndex: 0,
-        x: direction < 0 ? -300 : 300,
+        x: direction > 0 ? -250 : 250,
         opacity: 0
       };
     }
@@ -160,18 +160,18 @@ export default function Dua() {
             animate="center"
             exit="exit"
             transition={{
-              x: { type: "spring", stiffness: 350, damping: 30 },
+              x: { type: "tween", ease: "easeOut", duration: 0.18 },
               opacity: { duration: 0.15 }
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
+            dragElastic={0.15}
             onDragEnd={(_, { offset, velocity }) => {
-              const swipe = offset.x * 0.5 + velocity.x * 0.2;
-              if (swipe < -60) {
-                handlePrev();
-              } else if (swipe > 60) {
+              const swipe = offset.x * 0.6 + velocity.x * 0.2;
+              if (swipe < -40) {
                 handleNext();
+              } else if (swipe > 40) {
+                handlePrev();
               }
             }}
             className="w-full touch-pan-y cursor-grab active:cursor-grabbing pb-8"
