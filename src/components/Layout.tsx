@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Bookmark, Info, Moon, Sun, X } from 'lucide-react'
+import { Home, Bookmark, Info, Moon, Sun, X, Search } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
 import { Theme } from '../types'
 
@@ -28,6 +28,13 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Link to="/">حصن المسلم</Link>
           </h1>
           <div className="flex items-center gap-1">
+            <Link
+              to="/search"
+              className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Search"
+            >
+              <Search size={20} />
+            </Link>
             <button
               onClick={() => setShowAbout(true)}
               className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
