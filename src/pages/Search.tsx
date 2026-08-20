@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Search as SearchIcon, X } from 'lucide-react'
 import { duas } from '../data/duas'
 import { categories } from '../data/categories'
+import { getFirstDuaIndex, getCategoryById } from '../data/lookup'
 
 export default function Search() {
   const [query, setQuery] = useState('')
@@ -82,7 +83,7 @@ export default function Search() {
           </h2>
           <div className="space-y-3">
             {results.chapters.map(category => {
-              const firstDuaIndex = duas.findIndex(d => d.categoryId === category.id)
+              const firstDuaIndex = getFirstDuaIndex(category.id)
               return (
                 <Link
                   key={category.id}
@@ -118,7 +119,7 @@ export default function Search() {
           </h2>
           <div className="space-y-3">
             {results.duas.map(({ dua, index }) => {
-              const category = categories.find(c => c.id === dua.categoryId)
+              const category = getCategoryById(dua.categoryId)
               return (
                 <Link
                   key={index}

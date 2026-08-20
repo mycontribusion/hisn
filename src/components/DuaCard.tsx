@@ -2,18 +2,26 @@ import { Link } from 'react-router-dom'
 import { Dua } from '../types'
 import { useUserProgress } from '../context/UserProgressContext'
 import { Bookmark, Eye, EyeOff } from 'lucide-react'
-import { useState } from 'react'
-import { duas } from '../data/duas'
+import { useState, useMemo } from 'react'
+import { getDuaIndexById } from '../data/lookup'
 
 interface DuaCardProps {
   dua: Dua
   showFull?: boolean
+  /** Index of the dua in the duas array. If not provided, looked up via O(1) map. */
+  duaIndex?: number
 }
 
-export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
+export default function DuaCard({ dua, showFull = false, duaIndex }: DuaCardProps) {
   const { isBookmarked, addBookmark, removeBookmark } = useUserProgress()
   const bookmarked = isBookmarked(dua.id)
   const [showTransliteration, setShowTransliteration] = useState(false)
+
+  // O(1) lookup instead of O(n) duas.findIndex on every render
+  const resolvedDuaIndex = useMemo(
+    () => (duaIndex !== undefined ? duaIndex : getDuaIndexById(dua.id)),
+    [duaIndex, dua.id]
+  )
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -53,7 +61,7 @@ export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs uppercase tracking-wider font-semibold text-slate-400">Transliteration</span>
-                  <button 
+                  <button
                     onClick={() => setShowTransliteration(!showTransliteration)}
                     className="flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 px-2 py-1 rounded-md transition-colors"
                   >
@@ -75,7 +83,7 @@ export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
             {dua.virtue && (
                <div className="bg-primary-50/50 dark:bg-primary-900/20 p-4 rounded-xl border border-primary-100 dark:border-primary-800/30">
                  <p className="text-sm text-primary-800 dark:text-primary-300">
-                   <strong className="font-semibold tracking-wide uppercase text-xs mr-2">Virtue:</strong> 
+                   <strong className="font-semibold tracking-wide uppercase text-xs mr-2">Virtue:</strong>
                    {/*{dua.virtue}*/}
                  </p>
                </div>
@@ -89,12 +97,12 @@ export default function DuaCard({ dua, showFull = false }: DuaCardProps) {
                </div>
              )}
 
-           </div>
-         )}
+          </div>
+        )}
 
-         {!showFull && (
+        {!showFull && (
           <Link
-            to={`/dua/${duas.findIndex(d => d === dua) + 1}`}
+            to={`/dua/${resolvedDuaIndex + 1}`}
             className="inline-block text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
             Read more →

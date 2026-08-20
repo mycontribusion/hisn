@@ -1,20 +1,25 @@
 import { Link } from 'react-router-dom'
+import { useMemo } from 'react'
 import { useUserProgress } from '../context/UserProgressContext'
 import { duas } from '../data/duas'
 import { categories } from '../data/categories'
 import DuaCard from '../components/DuaCard'
 import CategoryCard from '../components/CategoryCard'
+import { getDuaIndexById, getFirstDuaIndex } from '../data/lookup'
 
 export default function Bookmarks() {
   const { bookmarks, bookmarkedCategories } = useUserProgress()
 
-  const bookmarkedDuas = duas.filter(dua => 
-    bookmarks.some(b => b.duaId === dua.id)
-  )
+  // O(n) with Set lookup instead of O(n*m) with .some()
+  const bookmarkedDuas = useMemo(() => {
+    const bookmarkedIds = new Set(bookmarks.map(b => b.duaId))
+    return duas.filter(dua => bookmarkedIds.has(dua.id))
+  }, [bookmarks])
 
-  const bookmarkedCategoryList = categories.filter(category =>
-    bookmarkedCategories.some(bc => bc.categoryId === category.id)
-  )
+  const bookmarkedCategoryList = useMemo(() => {
+    const bookmarkedCatIds = new Set(bookmarkedCategories.map(bc => bc.categoryId))
+    return categories.filter(category => bookmarkedCatIds.has(category.id))
+  }, [bookmarkedCategories])
 
   if (bookmarkedDuas.length === 0 && bookmarkedCategoryList.length === 0) {
     return (
@@ -39,9 +44,16 @@ export default function Bookmarks() {
             Bookmarked Categories
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {bookmarkedCategoryList.map(category => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
+            {bookmarkedCategoryList.map(category => {
+              const firstIdx = getFirstDuaIndex(category.id)
+              return (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  targetPath={firstIdx !== -1 ? `/dua/${firstIdx + 1}` : '/'}
+                />
+              )
+            })}
           </div>
         </div>
       )}
@@ -53,7 +65,7 @@ export default function Bookmarks() {
           </h3>
           <div className="space-y-4">
             {bookmarkedDuas.map(dua => (
-              <DuaCard key={dua.id} dua={dua} />
+              <DuaCard key={dua.id} dua={dua} duaIndex={getDuaIndexById(dua.id)} />
             ))}
           </div>
         </div>

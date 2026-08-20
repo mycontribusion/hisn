@@ -3,10 +3,11 @@ import { duas } from '../data/duas'
 import CategoryCard from '../components/CategoryCard'
 import { useUserProgress } from '../context/UserProgressContext'
 import { Link } from 'react-router-dom'
+import { getCategoryById, getFirstDuaIndex } from '../data/lookup'
 
 export default function Home() {
   const { recentDuas } = useUserProgress()
-  
+
   const recentDuaObjects = recentDuas
     .map(item => {
       const idx = parseInt(item.duaId, 10)
@@ -31,10 +32,8 @@ export default function Home() {
               }
             `}</style>
             {recentDuaObjects.map(item => {
-              const category = categories.find(c => c.id === item.dua.categoryId)
-              const firstDuaIndex = category
-                ? duas.findIndex(d => d.categoryId === category.id)
-                : -1
+              const category = getCategoryById(item.dua.categoryId)
+              const firstDuaIndex = getFirstDuaIndex(item.dua.categoryId)
               const chapterPath = firstDuaIndex !== -1 ? `/dua/${firstDuaIndex + 1}` : '/'
 
               return (
@@ -79,9 +78,16 @@ export default function Home() {
           All Chapters
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {categories.map(category => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
+          {categories.map(category => {
+            const firstIdx = getFirstDuaIndex(category.id)
+            return (
+              <CategoryCard
+                key={category.id}
+                category={category}
+                targetPath={firstIdx !== -1 ? `/dua/${firstIdx + 1}` : '/'}
+              />
+            )
+          })}
         </div>
       </div>
     </div>

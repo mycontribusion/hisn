@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react'
 import { UserProgress, Bookmark, BookmarkedCategory, RecentDua } from '../types'
 
 interface UserProgressContextType {
@@ -66,6 +66,16 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : []
   })
 
+  // Pre-compute Sets for O(1) lookups instead of O(n) .some() scans
+  const bookmarkedDuaIds = useMemo(
+    () => new Set(bookmarks.map(b => b.duaId)),
+    [bookmarks]
+  )
+  const bookmarkedCategoryIds = useMemo(
+    () => new Set(bookmarkedCategories.map(bc => bc.categoryId)),
+    [bookmarkedCategories]
+  )
+
   useEffect(() => {
     localStorage.setItem('userProgress', JSON.stringify(progress))
   }, [progress])
@@ -114,33 +124,33 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const addBookmark = (duaId: string) => {
-    if (!isBookmarked(duaId)) {
-      setBookmarks([...bookmarks, { duaId, addedAt: new Date().toISOString() }])
+  const addBookmark = useCallback((duaId: string) => {
+    if (!bookmarkedDuaIds.has(duaId)) {
+      setBookmarks(prev => [...prev, { duaId, addedAt: new Date().toISOString() }])
     }
-  }
+  }, [bookmarkedDuaIds])
 
-  const removeBookmark = (duaId: string) => {
-    setBookmarks(bookmarks.filter(b => b.duaId !== duaId))
-  }
+  const removeBookmark = useCallback((duaId: string) => {
+    setBookmarks(prev => prev.filter(b => b.duaId !== duaId))
+  }, [])
 
-  const isBookmarked = (duaId: string) => {
-    return bookmarks.some(b => b.duaId === duaId)
-  }
+  const isBookmarked = useCallback((duaId: string) => {
+    return bookmarkedDuaIds.has(duaId)
+  }, [bookmarkedDuaIds])
 
-  const addBookmarkedCategory = (categoryId: string) => {
-    if (!isCategoryBookmarked(categoryId)) {
-      setBookmarkedCategories([...bookmarkedCategories, { categoryId, addedAt: new Date().toISOString() }])
+  const addBookmarkedCategory = useCallback((categoryId: string) => {
+    if (!bookmarkedCategoryIds.has(categoryId)) {
+      setBookmarkedCategories(prev => [...prev, { categoryId, addedAt: new Date().toISOString() }])
     }
-  }
+  }, [bookmarkedCategoryIds])
 
-  const removeBookmarkedCategory = (categoryId: string) => {
-    setBookmarkedCategories(bookmarkedCategories.filter(c => c.categoryId !== categoryId))
-  }
+  const removeBookmarkedCategory = useCallback((categoryId: string) => {
+    setBookmarkedCategories(prev => prev.filter(c => c.categoryId !== categoryId))
+  }, [])
 
-  const isCategoryBookmarked = (categoryId: string) => {
-    return bookmarkedCategories.some(c => c.categoryId === categoryId)
-  }
+  const isCategoryBookmarked = useCallback((categoryId: string) => {
+    return bookmarkedCategoryIds.has(categoryId)
+  }, [bookmarkedCategoryIds])
 
   const incrementRead = useCallback(() => {
     setProgress(prev => {

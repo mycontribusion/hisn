@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { duas } from '../data/duas'
-import { categories } from '../data/categories'
+import { getCategoryById } from '../data/lookup'
 import DuaCard from '../components/DuaCard'
 import { useUserProgress } from '../context/UserProgressContext'
 import { useEffect, useRef, useState } from 'react'
@@ -13,7 +13,7 @@ export default function Dua() {
   
   const currentIndex = parseInt(duaIndex ?? '1', 10) - 1
   const dua = duas[currentIndex] ?? null
-  const category = dua ? categories.find(c => c.id === dua.categoryId) : null
+  const category = dua ? getCategoryById(dua.categoryId) : null
   
   const { incrementRead, addRecentDua, setLastReadDuaId, setLastReadCategoryId, addRecentCategory } = useUserProgress()
   const [direction, setDirection] = useState(0)
@@ -35,7 +35,7 @@ export default function Dua() {
   useEffect(() => {
     const saveToRecent = () => {
       if (currentDuaIdRef.current && currentCategoryIdRef.current) {
-        const category = categories.find(c => c.id === currentCategoryIdRef.current)
+        const category = getCategoryById(currentCategoryIdRef.current)
         const chapterId = category?.chapterId?.toString() || currentCategoryIdRef.current
         addRecentDua(currentDuaIdRef.current, chapterId)
         addRecentCategory(currentCategoryIdRef.current)
@@ -191,7 +191,7 @@ export default function Dua() {
                 </h2>
               </div>
             )}
-            <DuaCard dua={dua} showFull={true} />
+            <DuaCard dua={dua} showFull={true} duaIndex={currentIndex} />
           </motion.div>
         </AnimatePresence>
       </div>

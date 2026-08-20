@@ -2,15 +2,25 @@ import { Link } from 'react-router-dom'
 import { Category } from '../types'
 import { useUserProgress } from '../context/UserProgressContext'
 import { Bookmark } from 'lucide-react'
-import { duas } from '../data/duas'
+import { useMemo } from 'react'
+import { getFirstDuaIndex } from '../data/lookup'
 
 interface CategoryCardProps {
   category: Category
+  /** Pre-computed target path. If not provided, looked up via O(1) map. */
+  targetPath?: string
 }
 
-export default function CategoryCard({ category }: CategoryCardProps) {
+export default function CategoryCard({ category, targetPath }: CategoryCardProps) {
   const { isCategoryBookmarked, addBookmarkedCategory, removeBookmarkedCategory } = useUserProgress()
   const bookmarked = isCategoryBookmarked(category.id)
+
+  // O(1) lookup instead of O(n) duas.findIndex on every render
+  const resolvedTargetPath = useMemo(() => {
+    if (targetPath !== undefined) return targetPath
+    const firstDuaIndex = getFirstDuaIndex(category.id)
+    return firstDuaIndex !== -1 ? `/dua/${firstDuaIndex + 1}` : '/'
+  }, [targetPath, category.id])
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -22,12 +32,9 @@ export default function CategoryCard({ category }: CategoryCardProps) {
     }
   }
 
-  const firstDuaIndex = duas.findIndex(d => d.categoryId === category.id)
-  const targetPath = firstDuaIndex !== -1 ? `/dua/${firstDuaIndex + 1}` : '/'
-
   return (
     <Link
-      to={targetPath}
+      to={resolvedTargetPath}
       className={`glass-card block p-5 rounded-2xl border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
