@@ -15,7 +15,7 @@ export default function Dua() {
   const dua = duas[currentIndex] ?? null
   const category = dua ? getCategoryById(dua.categoryId) : null
   
-  const { incrementRead, addRecentDua, setLastReadDuaId, setLastReadCategoryId, addRecentCategory } = useUserProgress()
+  const { recordDuaRead, addRecentDua, addRecentCategory } = useUserProgress()
   const [direction, setDirection] = useState(0)
   const currentDuaIdRef = useRef<string | null>(null)
   const currentCategoryIdRef = useRef<string | null>(null)
@@ -25,11 +25,9 @@ export default function Dua() {
     if (dua) {
       currentDuaIdRef.current = String(currentIndex)
       currentCategoryIdRef.current = dua.categoryId
-      incrementRead()
-      setLastReadCategoryId(dua.categoryId)
-      setLastReadDuaId(String(currentIndex))
+      recordDuaRead(String(currentIndex), dua.categoryId)
     }
-  }, [currentIndex, dua, incrementRead, setLastReadCategoryId, setLastReadDuaId])
+  }, [currentIndex, dua, recordDuaRead])
 
   // Save to recent list on component unmount (returning home) or when exiting/backgrounding the app
   useEffect(() => {
@@ -138,11 +136,6 @@ export default function Dua() {
     }
   };
 
-  const swipeConfidenceThreshold = 300;
-  const swipePower = (offset: number, velocity: number) => {
-    return Math.abs(offset) * velocity;
-  };
-
   return (
     <div className="space-y-6 overflow-hidden relative min-h-[80vh] flex flex-col">
       <div className="flex items-center justify-between mb-2 gap-2">
@@ -158,7 +151,7 @@ export default function Dua() {
       </div>
 
       <div className="w-full flex-1">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.div
             key={dua.id}
             custom={direction}
@@ -167,18 +160,17 @@ export default function Dua() {
             animate="center"
             exit="exit"
             transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 }
+              x: { type: "spring", stiffness: 350, damping: 30 },
+              opacity: { duration: 0.15 }
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={1}
+            dragElastic={0.2}
             onDragEnd={(_, { offset, velocity }) => {
-              const swipe = swipePower(offset.x, velocity.x);
-
-              if (swipe < -swipeConfidenceThreshold) {
+              const swipe = offset.x * 0.5 + velocity.x * 0.2;
+              if (swipe < -60) {
                 handlePrev();
-              } else if (swipe > swipeConfidenceThreshold) {
+              } else if (swipe > 60) {
                 handleNext();
               }
             }}

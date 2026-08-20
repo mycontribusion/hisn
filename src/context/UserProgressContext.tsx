@@ -16,6 +16,7 @@ interface UserProgressContextType {
   removeBookmarkedCategory: (categoryId: string) => void
   isCategoryBookmarked: (categoryId: string) => boolean
   incrementRead: () => void
+  recordDuaRead: (duaId: string, categoryId: string) => void
   addRecentDua: (duaId: string, chapterId: string) => void
   addRecentCategory: (categoryId: string) => void
 }
@@ -166,6 +167,22 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const recordDuaRead = useCallback((duaId: string, categoryId: string) => {
+    setProgress(prev => {
+      const today = new Date().toDateString()
+      const lastRead = prev.lastReadDate ? new Date(prev.lastReadDate).toDateString() : ''
+      return {
+        ...prev,
+        totalRead: prev.totalRead + 1,
+        lastReadDate: new Date().toISOString(),
+        readToday: today === lastRead ? prev.readToday : true,
+        streak: today === lastRead ? prev.streak : prev.streak + 1,
+        lastReadDuaId: duaId,
+        lastReadCategoryId: categoryId
+      }
+    })
+  }, [])
+
   return (
     <UserProgressContext.Provider value={{
       progress,
@@ -182,6 +199,7 @@ export function UserProgressProvider({ children }: { children: ReactNode }) {
       removeBookmarkedCategory,
       isCategoryBookmarked,
       incrementRead,
+      recordDuaRead,
       addRecentDua,
       addRecentCategory
     }}>

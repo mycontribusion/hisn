@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { Dua } from '../types'
 import { useUserProgress } from '../context/UserProgressContext'
 import { Bookmark, Eye, EyeOff } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, memo } from 'react'
 import { getDuaIndexById } from '../data/lookup'
 
 interface DuaCardProps {
@@ -12,7 +12,7 @@ interface DuaCardProps {
   duaIndex?: number
 }
 
-export default function DuaCard({ dua, showFull = false, duaIndex }: DuaCardProps) {
+const DuaCard = memo(function DuaCard({ dua, showFull = false, duaIndex }: DuaCardProps) {
   const { isBookmarked, addBookmark, removeBookmark } = useUserProgress()
   const bookmarked = isBookmarked(dua.id)
   const [showTransliteration, setShowTransliteration] = useState(false)
@@ -111,4 +111,6 @@ export default function DuaCard({ dua, showFull = false, duaIndex }: DuaCardProp
       </div>
     </div>
   )
-}
+})
+
+export default DuaCard

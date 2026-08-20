@@ -15,16 +15,18 @@ export default defineConfig({
         theme_color: '#064e3b',
         background_color: '#ffffff',
         display: 'standalone',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
             src: 'pwa-192x192.png',
-            sizes: '192x192 any',
+            sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
             src: 'pwa-512x512.png',
-            sizes: '512x512 any',
+            sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
           }
@@ -35,6 +37,16 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'dua-data': ['./src/data/duas.ts', './src/data/categories.ts'],
+          'vendor': ['react', 'react-dom', 'react-router-dom', 'framer-motion', 'lucide-react']
+        }
+      }
+    }
+  },
   server: {
     port: 3000,
     open: true
