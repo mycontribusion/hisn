@@ -31,6 +31,38 @@ export const duaIndexMap: Map<string, number> = new Map(
 )
 
 /**
+ * Arabic text normalization: strips diacritics (harakat/tashkeel),
+ * tatweel, and unifies alef, yeh, and teh marbuta variants.
+ */
+export function normalizeArabicText(str: string): string {
+  if (!str) return ''
+  return str
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
+    .replace(/\u0640/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .toLowerCase()
+}
+
+// Pre-computed normalized Arabic text for duas
+export const normalizedDuas = duas.map((dua, index) => ({
+  dua,
+  index,
+  normalizedArabic: normalizeArabicText(dua.arabic),
+  normalizedTranslation: dua.translation.toLowerCase(),
+  normalizedTransliteration: (dua.transliteration || '').toLowerCase(),
+  normalizedReference: (dua.reference || '').toLowerCase()
+}))
+
+// Pre-computed normalized Arabic text for categories
+export const normalizedCategories = categories.map(category => ({
+  category,
+  normalizedName: category.name.toLowerCase(),
+  normalizedNameArabic: normalizeArabicText(category.nameArabic)
+}))
+
+/**
  * Helper: get category by ID in O(1)
  */
 export function getCategoryById(id: string): Category | undefined {

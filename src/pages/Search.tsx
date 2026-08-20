@@ -1,31 +1,37 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Search as SearchIcon, X } from 'lucide-react'
-import { duas } from '../data/duas'
-import { categories } from '../data/categories'
-import { getFirstDuaIndex, getCategoryById } from '../data/lookup'
+import { getFirstDuaIndex, getCategoryById, normalizedDuas, normalizedCategories, normalizeArabicText } from '../data/lookup'
 
 export default function Search() {
   const [query, setQuery] = useState('')
 
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (q.length < 2) return { chapters: [], duas: [] }
+    const rawQuery = query.trim()
+    if (rawQuery.length < 2) return { chapters: [], duas: [] }
 
-    const matchedChapters = categories.filter(c =>
-      c.name.toLowerCase().includes(q) ||
-      c.nameArabic.includes(q)
-    ).slice(0, 5)
+    const qLower = rawQuery.toLowerCase()
+    const qArabic = normalizeArabicText(rawQuery)
 
-    const matchedDuas = duas
-      .map((dua, index) => ({ dua, index }))
-      .filter(({ dua }) =>
-        dua.arabic.includes(q) ||
-        dua.translation.toLowerCase().includes(q) ||
-        dua.transliteration.toLowerCase().includes(q) ||
-        dua.reference.toLowerCase().includes(q)
+    const matchedChapters = normalizedCategories
+      .filter(({ category, normalizedName, normalizedNameArabic }) =>
+        normalizedName.includes(qLower) ||
+        normalizedNameArabic.includes(qArabic) ||
+        category.nameArabic.includes(rawQuery)
       )
-      .slice(0, 20)
+      .map(item => item.category)
+      .slice(0, 10)
+
+    const matchedDuas = normalizedDuas
+      .filter(({ dua, normalizedArabic, normalizedTranslation, normalizedTransliteration, normalizedReference }) =>
+        normalizedArabic.includes(qArabic) ||
+        dua.arabic.includes(rawQuery) ||
+        normalizedTranslation.includes(qLower) ||
+        normalizedTransliteration.includes(qLower) ||
+        normalizedReference.includes(qLower)
+      )
+      .map(({ dua, index }) => ({ dua, index }))
+      .slice(0, 50)
 
     return { chapters: matchedChapters, duas: matchedDuas }
   }, [query])
@@ -115,7 +121,7 @@ export default function Search() {
       {results.duas.length > 0 && (
         <div>
           <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-1">
-            Duas ({results.duas.length}{results.duas.length === 20 ? '+' : ''} results)
+            Duas ({results.duas.length}{results.duas.length === 50 ? '+' : ''} results)
           </h2>
           <div className="space-y-3">
             {results.duas.map(({ dua, index }) => {
