@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import { Home, Bookmark, Info, Moon, Sun, X, Search, Search as SearchIcon } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
 import { useSearch } from '../context/SearchContext'
-import { Theme } from '../types'
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation()
@@ -16,9 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   ]
 
   const toggleTheme = () => {
-    const themes: Theme[] = ['light', 'dark', 'system']
-    const currentIndex = themes.indexOf(theme)
-    setTheme(themes[(currentIndex + 1) % themes.length])
+    setTheme(theme === 'light' ? 'dark' : 'light')
   }
 
   const { query, setQuery } = useSearch()
@@ -77,9 +74,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                 className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
                 aria-label="Toggle theme"
               >
-                {theme === 'light' && <Sun size={20} />}
-                {theme === 'dark' && <Moon size={20} />}
-                {theme === 'system' && <span className="text-sm font-medium">Auto</span>}
+                {theme === 'light' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
             </div>
           )}

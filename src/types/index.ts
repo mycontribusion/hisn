@@ -47,5 +47,5 @@ export interface RecentDua {
   chapterId: string;
 }
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark';
 export type Language = 'en' | 'ar' | 'both';

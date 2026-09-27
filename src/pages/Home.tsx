@@ -39,7 +39,7 @@ export default function Home() {
               return (
                 <div
                   key={item.duaId}
-                  className="glass-card min-w-[240px] flex-shrink-0 p-5 rounded-2xl snap-start hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden group border"
+                  className="glass-card w-[240px] flex-shrink-0 p-5 rounded-2xl snap-start hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden group border"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative z-10">

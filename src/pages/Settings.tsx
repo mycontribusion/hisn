@@ -6,8 +6,7 @@ export default function Settings() {
 
   const themeOptions: { value: Theme; label: string }[] = [
     { value: 'light', label: 'Light' },
-    { value: 'dark', label: 'Dark' },
-    { value: 'system', label: 'System' }
+    { value: 'dark', label: 'Dark' }
   ]
 
   return (
