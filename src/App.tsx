@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
 import { UserProgressProvider } from './context/UserProgressContext'
 import { SearchProvider } from './context/SearchContext'
@@ -75,6 +75,32 @@ function ScrollRestore() {
   return null
 }
 
+// Android/device/browser back-button behavior at the navigation level.
+//
+// Swipe navigation between duas pushes history entries (e.g. /dua/5 -> /dua/6),
+// so pressing back while viewing a dua would normally walk back through those
+// individual dua entries. Instead, back from any dua goes straight to Home (/),
+// restoring the saved Home scroll position. Back from Home/Search/Bookmarks is
+// left to the browser's normal behavior.
+function BackToHome() {
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const handlePopState = () => {
+      // Only intercept back while currently on a dua reader route.
+      if (!pathname.startsWith('/dua/')) return
+      // Replace (not push) so we do not create a duplicate Home history entry.
+      navigate('/', { replace: true })
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [pathname, navigate])
+
+  return null
+}
+
 function App() {
   return (
     <ThemeProvider>
@@ -82,6 +108,7 @@ function App() {
         <SearchProvider>
           <Layout>
             <ScrollRestore />
+            <BackToHome />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/dua/:duaIndex" element={<Dua />} />
