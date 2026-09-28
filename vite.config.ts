@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { fontsHandler } from './src/sw-runtime-cache'
 
 export default defineConfig({
   plugins: [
@@ -33,7 +34,24 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Google Fonts are optional presentation resources. They are cached
+        // with a cache-first-then-network handler that never breaks the
+        // service worker on a failed network request (dead Wi-Fi / offline).
+        // Only the two font domains are intercepted; Vercel Analytics and
+        // other third-party requests are left to the browser.
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: fontsHandler,
+            method: 'GET'
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: fontsHandler,
+            method: 'GET'
+          }
+        ]
       }
     })
   ],

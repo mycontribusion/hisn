@@ -10,7 +10,14 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!--
+      Google Fonts are OPTIONAL PRESENTATION RESOURCES. They are loaded
+      non-blocking (media="print" + onload swap) so a failed/dead-Wi-Fi
+      request can never block the application shell from rendering. When the
+      CSS fails to load, the browser falls back to the local font stack.
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     <title>Hisnul Muslim - Fortress of the Muslim</title>
   </head>
   <body>
