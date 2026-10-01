@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import { Dua } from '../types'
 import { useUserProgress } from '../context/UserProgressContext'
-import { Bookmark, Eye, EyeOff } from 'lucide-react'
-import { useState, useMemo, memo } from 'react'
-import { getDuaIndexById } from '../data/lookup'
+import { Bookmark, Eye, EyeOff, Copy, Check } from 'lucide-react'
+import { useState, useMemo, memo, useEffect, useRef } from 'react'
+import { getDuaIndexById, getCategoryById } from '../data/lookup'
 
 interface DuaCardProps {
   dua: Dua
@@ -16,6 +16,77 @@ const DuaCard = memo(function DuaCard({ dua, showFull = false, duaIndex }: DuaCa
   const { isBookmarked, addBookmark, removeBookmark } = useUserProgress()
   const bookmarked = isBookmarked(dua.id)
   const [showTransliteration, setShowTransliteration] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clear pending reset on unmount so no state update happens after leaving the reader
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+    }
+  }, [])
+
+  // O(1) lookup; the reader resolves the same category object for its header/title.
+  const category = useMemo(() => getCategoryById(dua.categoryId), [dua.categoryId])
+
+  /**
+   * Single assembled copy of everything the reader displays for this dua, in order:
+   * chapter number + chapter title, chapter Arabic title, dua number, Arabic text,
+   * Transliteration (only when shown), then Translation.
+   * Sections are separated by blank lines; empty ones are skipped. The chapter
+   * Arabic title is emitted once — the reader shows it once, as a badge.
+   */
+  const buildCopyText = () => {
+    const sections: string[] = []
+
+    if (category) {
+      const chapterNumber = category.chapterId ?? category.id
+      sections.push(`${chapterNumber}. ${category.name}`)
+      if (category.nameArabic) sections.push(category.nameArabic)
+    }
+
+    sections.push(`Dua #${dua.number}`)
+    sections.push(dua.arabic)
+
+    if (dua.transliteration && showTransliteration) {
+      sections.push(`Transliteration\n${dua.transliteration}`)
+    }
+
+    sections.push(`Translation\n${dua.translation}`)
+
+    return sections.filter(s => s.trim().length > 0).join('\n\n')
+  }
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    // Explicit action only: never copy because the card itself was tapped.
+    e.preventDefault()
+    e.stopPropagation()
+
+    const text = buildCopyText()
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text)
+      } else {
+        // Fallback for older WebViews without the async Clipboard API
+        const textarea = document.createElement('textarea')
+        textarea.value = text
+        textarea.setAttribute('readonly', '')
+        textarea.style.position = 'fixed'
+        textarea.style.opacity = '0'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+
+      setCopied(true)
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+      copyTimerRef.current = setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy dua text:', err)
+    }
+  }
 
   // O(1) lookup instead of O(n) duas.findIndex on every render
   const resolvedDuaIndex = useMemo(
@@ -39,15 +110,32 @@ const DuaCard = memo(function DuaCard({ dua, showFull = false, duaIndex }: DuaCa
         <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
           Dua #{dua.number}
         </span>
-        <button
-          onClick={handleBookmark}
-          className={`p-1.5 rounded-lg ${bookmarked
+        <div className="flex items-center gap-1">
+          {showFull && (
+            <button
+              onClick={handleCopy}
+              aria-label="Copy dua text"
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-colors ${
+                copied
+                  ? 'text-primary-600 bg-primary-100 dark:text-primary-400 dark:bg-primary-800'
+                  : 'text-gray-400 hover:text-primary-600 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              <span className="text-xs font-medium">{copied ? 'Copied' : 'Copy'}</span>
+            </button>
+          )}
+          <button
+            onClick={handleBookmark}
+            aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this dua'}
+            className={`p-1.5 rounded-lg ${bookmarked
               ? 'text-primary-600 bg-primary-100 dark:bg-primary-800'
               : 'text-gray-400 hover:text-primary-600'
             }`}
-        >
-          <Bookmark size={18} fill={bookmarked ? 'currentColor' : 'none'} />
-        </button>
+          >
+            <Bookmark size={18} fill={bookmarked ? 'currentColor' : 'none'} />
+          </button>
+        </div>
       </div>
 
       <div className="space-y-6 relative z-10">
@@ -76,9 +164,14 @@ const DuaCard = memo(function DuaCard({ dua, showFull = false, duaIndex }: DuaCa
               </div>
             )}
 
-            <p className="text-base md:text-lg text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
-              {dua.translation}
-            </p>
+            <div>
+              <span className="block text-xs uppercase tracking-wider font-semibold text-slate-400 mb-2">
+                Translation
+              </span>
+              <p className="text-base md:text-lg text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+                {dua.translation}
+              </p>
+            </div>
 
             {dua.virtue && (
                <div className="bg-primary-50/50 dark:bg-primary-900/20 p-4 rounded-xl border border-primary-100 dark:border-primary-800/30">

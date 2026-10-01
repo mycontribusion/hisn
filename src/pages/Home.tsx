@@ -17,9 +17,6 @@ export default function Home() {
 
   return (
     <div className="space-y-4">
-      <div className="text-center py-2">
-      </div>
-
       {recentDuaObjects.length > 0 && (
         <div className="mb-4">
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 px-1">
@@ -39,33 +36,37 @@ export default function Home() {
               return (
                 <div
                   key={item.duaId}
-                  className="glass-card w-[240px] flex-shrink-0 p-5 rounded-2xl snap-start hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden group border"
+                  className="glass-card w-[240px] flex-shrink-0 rounded-2xl snap-start hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden group border flex items-stretch"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative z-10">
+
+                  {/* Main clickable area -> opens the category/chapter. Sibling of the dua button, never nested inside it. */}
+                  <Link
+                    to={chapterPath}
+                    className="relative z-10 flex-1 min-w-0 text-left p-5 flex flex-col hover:bg-primary-500/5 transition-colors"
+                  >
                     <div className="flex items-center gap-2 mb-3 flex-wrap">
                       {category && (
-                        <Link
-                          to={chapterPath}
-                          className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wider px-2 py-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                        >
+                        <span className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wider px-2 py-1 rounded-full">
                           Ch. {category.chapterId}
-                        </Link>
+                        </span>
                       )}
-                      <Link
-                        to={`/dua/${item.index + 1}`}
-                        className="flex items-center justify-center bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold text-xs uppercase tracking-wider px-3 py-1 rounded-full hover:bg-primary-200 dark:hover:bg-primary-800/60 transition-colors"
-                      >
-                        Dua #{item.dua.number}
-                      </Link>
                     </div>
-                    <Link
-                      to={chapterPath}
-                      className="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors block mt-2"
-                    >
+                    <span className="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-2 hover:text-primary-600 dark:hover:text-primary-400 transition-colors block mt-2">
                       {category?.name}
-                    </Link>
-                  </div>
+                    </span>
+                  </Link>
+
+                  {/* Separate dua-number button -> opens that exact dua, independent of the main card. */}
+                  <Link
+                    to={`/dua/${item.index + 1}`}
+                    className="relative z-10 flex-shrink-0 flex items-center px-4 py-5 border-l border-slate-200/70 dark:border-slate-700/60 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors"
+                    aria-label={`Open dua number ${item.dua.number}`}
+                  >
+                    <span className="flex items-center justify-center bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 font-bold text-xs uppercase tracking-wider px-3 py-2 rounded-full hover:bg-primary-200 dark:hover:bg-primary-800/60 transition-colors">
+                      #{item.dua.number}
+                    </span>
+                  </Link>
                 </div>
               )
             })}

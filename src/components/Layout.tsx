@@ -85,19 +85,20 @@ export default function Layout({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 glass-header border-t-0 border-b-0 border-t border-white/20 dark:border-slate-800/50 pb-safe pt-1">
-        <div className="container mx-auto flex justify-around items-center py-1.5 px-4 max-w-md">
+      {/* Height matches the header: content 36px (p-2 + 20px icon) + py-2 (8px*2) = 52px, + 1px glass-header border = 53px */}
+      <nav className="fixed bottom-0 left-0 right-0 glass-header border-t-0 border-b-0 border-t border-white/20 dark:border-slate-800/50 pb-safe min-h-[52px] flex items-center">
+        <div className="container mx-auto flex items-center gap-2 px-4 max-w-md w-full">
           {navItems.map(({ path, icon: Icon, label }) => (
             <Link
               key={path}
               to={path}
-              className={`flex flex-col items-center p-1.5 rounded-xl transition-all duration-300 ${
+              className={`flex-1 min-w-0 flex flex-col items-center p-1.5 rounded-xl transition-all duration-300 ${
                 location.pathname === path
                   ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 scale-110'
                   : 'text-slate-500 hover:text-primary-500 hover:bg-slate-50 dark:hover:bg-slate-800/50'
               }`}
             >
-              <Icon size={20} strokeWidth={location.pathname === path ? 2.5 : 2} />
+              <Icon size={18} strokeWidth={location.pathname === path ? 2.5 : 2} />
               <span className="text-[9px] mt-0.5 font-medium">{label}</span>
             </Link>
           ))}
