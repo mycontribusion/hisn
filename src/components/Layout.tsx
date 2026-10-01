@@ -85,23 +85,31 @@ export default function Layout({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      {/* Height matches the header: content 36px (p-2 + 20px icon) + py-2 (8px*2) = 52px, + 1px glass-header border = 53px */}
-      <nav className="fixed bottom-0 left-0 right-0 glass-header border-t-0 border-b-0 border-t border-white/20 dark:border-slate-800/50 pb-safe min-h-[52px] flex items-center">
-        <div className="container mx-auto flex items-center gap-2 px-4 max-w-md w-full">
-          {navItems.map(({ path, icon: Icon, label }) => (
-            <Link
-              key={path}
-              to={path}
-              className={`flex-1 min-w-0 flex flex-col items-center p-1.5 rounded-xl transition-all duration-300 ${
-                location.pathname === path
-                  ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 scale-110'
-                  : 'text-slate-500 hover:text-primary-500 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-              }`}
-            >
-              <Icon size={18} strokeWidth={location.pathname === path ? 2.5 : 2} />
-              <span className="text-[9px] mt-0.5 font-medium">{label}</span>
-            </Link>
-          ))}
+      {/* Bottom nav surface: min-h-[58px] with ~44px button pills centred inside,
+          leaving breathing room above/below and separating it from the body via
+          top border + upward shadow. Slightly taller than the header by design. */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800/80 shadow-[0_-4px_16px_rgb(0,0,0,0.06)] dark:shadow-[0_-4px_16px_rgb(0,0,0,0.35)] pb-safe min-h-[58px] flex items-center">
+        <div className="container mx-auto flex items-center gap-3 px-4 max-w-md w-full">
+          {navItems.map(({ path, icon: Icon, label }) => {
+            const isActive = location.pathname === path
+            return (
+              <Link
+                key={path}
+                to={path}
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-2 rounded-xl border transition-all duration-300 ${
+                  isActive
+                    ? 'text-primary-600 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border-primary-200 dark:border-primary-800/60'
+                    : 'text-slate-500 dark:text-slate-400 bg-slate-50/80 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-700/60 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                <span className={`text-[10px] mt-0.5 ${isActive ? 'font-semibold' : 'font-medium'}`}>
+                  {label}
+                </span>
+              </Link>
+            )
+          })}
         </div>
       </nav>
 
