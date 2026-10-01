@@ -1,8 +1,26 @@
 import { ReactNode, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Bookmark, Info, Moon, Sun, X, Search, Search as SearchIcon } from 'lucide-react'
+import { Home, Bookmark, Info, Moon, Sun, X, Search, Search as SearchIcon, Linkedin } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
 import { useSearch } from '../context/SearchContext'
+
+/**
+ * Official Gmail mark. Lucide has no brand icon, so the real logo geometry is
+ * inlined here rather than adding a dependency. Uses Google's official brand
+ * colours and the authentic 52x40 envelope proportions.
+ */
+function GmailIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * (40 / 52)} viewBox="0 0 52 40" aria-hidden="true">
+      <path fill="#4285F4" d="M3.64 40h8.182V18.182L0 7.5v27.364C0 37.408 1.633 40 3.64 40z" />
+      <path fill="#34A853" d="M40.182 40h8.182C50.372 40 52 37.408 52 34.864V7.5L40.182 18.182V40z" />
+      <path fill="#FBBC04" d="M40.182 3.636v14.546L52 7.5V3.636C52 1.091 49.909 0 48.182 0h-4.364c-1.727 0-3.636 1.091-3.636 3.636z" />
+      <path fill="#EA4335" d="M11.818 18.182 0 7.5V7.318C0 3.4 3.4 0 7.318 0h4.364c.977 0 1.955.4 2.728 1.09L26.318 14.5 23.136 18.18 11.818 12.727V18.182z" />
+      <path fill="#C5221F" d="M0 7.5l11.818 11.682L23.136 7.5l3.182 3.682L14.455 24 0 7.5z" />
+      <path fill="#188038" d="M52 7.5 40.182 18.182 26.318 11.182 23.136 7.5l3.182-3.682L37.545 24 52 7.5z" />
+    </svg>
+  )
+}
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation()
@@ -171,6 +189,32 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </a>
                 </li>
               </ul>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium mb-2">
+                Contact Developer
+              </p>
+              <div className="flex items-center gap-3">
+                <a
+                  href="mailto:ahmadmusamuhd@gmail.com"
+                  title="Contact developer by email"
+                  aria-label="Contact developer by email"
+                  className="inline-flex items-center justify-center p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-primary-600 hover:border-primary-200 dark:hover:text-primary-400 dark:hover:border-primary-800 transition-colors"
+                >
+                  <GmailIcon size={18} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/dr-ahmad-musa-muhammad-b93587156/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Contact developer on LinkedIn"
+                  aria-label="Contact developer on LinkedIn"
+                  className="inline-flex items-center justify-center p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-primary-600 hover:border-primary-200 dark:hover:text-primary-400 dark:hover:border-primary-800 transition-colors"
+                >
+                  <Linkedin size={18} />
+                </a>
+              </div>
             </div>
           </div>
         </div>
