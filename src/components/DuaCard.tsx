@@ -148,7 +148,7 @@ const DuaCard = memo(function DuaCard({ dua, showFull = false, duaIndex }: DuaCa
             {dua.transliteration && (
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs uppercase tracking-wider font-semibold text-slate-400">Transliteration</span>
+                  <span className={`text-xs uppercase tracking-wider font-semibold ${showTransliteration ? 'text-slate-400' : 'text-slate-300 dark:text-slate-600'}`}>Transliteration</span>
                   <button
                     onClick={() => setShowTransliteration(!showTransliteration)}
                     className="flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 px-2 py-1 rounded-md transition-colors"

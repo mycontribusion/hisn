@@ -150,6 +150,25 @@ export default function Layout({ children }: { children: ReactNode }) {
               and remembrances from the Quran and Sunnah. This app helps you memorize and
               regularly recite these important duas.
             </p>
+            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium mb-2">
+                Key Features
+              </p>
+              <ul className="text-gray-500 dark:text-gray-400 text-xs space-y-1.5">
+                <li>
+                  <span className="font-semibold text-gray-600 dark:text-gray-300">Powerful Search</span>
+                  {' — Search across chapters, Arabic, translation, transliteration and references.'}
+                </li>
+                <li>
+                  <span className="font-semibold text-gray-600 dark:text-gray-300">Smart Bookmarks</span>
+                  {' — Save individual duas or entire chapters and discover useful duas through suggestions.'}
+                </li>
+                <li>
+                  <span className="font-semibold text-gray-600 dark:text-gray-300">Quick Resume</span>
+                  {' — Return to a recent chapter or jump directly back to the exact dua you were reading.'}
+                </li>
+              </ul>
+            </div>
             <p className="text-gray-500 dark:text-gray-500 text-xs mt-3">
               All supplications are from the famous book "Hisnul Muslim" by Shaykh Sa'id bin Ali bin Wahf Al-Qahtani (1952–2018).
             </p>
